@@ -66,6 +66,9 @@ class Settings {
 
   /// ICE Gathering Timeout (in millisecond).
   int ice_gathering_timeout = 500;
+
+  /// Sip Message Delay (in millisecond) ( default 0 ).
+  int sip_message_delay = 0;
 }
 
 // Configuration checks.
@@ -257,6 +260,9 @@ class Checks {
       if (dtmf_mode == null) return;
       dst!.dtmf_mode = dtmf_mode;
     },
+    'ice_gathering_timeout': (Settings src, Settings? dst) {
+      dst!.ice_gathering_timeout = src.ice_gathering_timeout;
+    }
   };
 }
 

@@ -11,17 +11,18 @@ typedef OnCloseCallback = void Function(int? code, String? reason);
 typedef OnOpenCallback = void Function();
 
 class WebSocketImpl {
-  WebSocketImpl(this._url);
+  WebSocketImpl(this._url, this.messageDelay);
 
   final String _url;
   WebSocket? _socket;
   OnOpenCallback? onOpen;
   OnMessageCallback? onMessage;
   OnCloseCallback? onClose;
-
+  final int messageDelay;
   void connect(
       {Iterable<String>? protocols,
       required WebSocketSettings webSocketSettings}) async {
+    handleQueue();
     logger.i('connect $_url, ${webSocketSettings.extraHeaders}, $protocols');
     try {
       if (webSocketSettings.allowBadCertificate) {
@@ -43,10 +44,20 @@ class WebSocketImpl {
     }
   }
 
-  void send(dynamic data) {
+  final StreamController<dynamic> queue = StreamController<dynamic>.broadcast();
+  void handleQueue() async {
+    queue.stream.asyncMap((dynamic event) async {
+      await Future<void>.delayed(Duration(milliseconds: messageDelay));
+      return event;
+    }).listen((dynamic event) async {
+      _socket!.add(event);
+      logger.d('send: \n\n$event');
+    });
+  }
+
+  void send(dynamic data) async {
     if (_socket != null) {
-      _socket!.add(data);
-      logger.d('send: \n\n$data');
+      queue.add(data);
     }
   }
 

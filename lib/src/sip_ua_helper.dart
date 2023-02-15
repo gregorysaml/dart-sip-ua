@@ -62,7 +62,7 @@ class SIPUAHelper extends EventManager {
     if (_ua != null) {
       _ua!.stop();
     } else {
-      Log.w('ERROR: stop called but not started, call start first.');
+      logger.w('ERROR: stop called but not started, call start first.');
     }
   }
 
@@ -77,7 +77,7 @@ class SIPUAHelper extends EventManager {
       assert(registered, 'ERROR: you must call register first.');
       _ua!.unregister(all: all);
     } else {
-      Log.e('ERROR: unregister called, you must call start first.');
+      logger.e('ERROR: unregister called, you must call start first.');
     }
   }
 
@@ -115,10 +115,13 @@ class SIPUAHelper extends EventManager {
 
     // Reset settings
     _settings = Settings();
-    WebSocketInterface socket = WebSocketInterface(
-        uaSettings.webSocketUrl, uaSettings.webSocketSettings);
+    WebSocketInterface socket = WebSocketInterface(uaSettings.webSocketUrl,
+        messageDelay: _settings.sip_message_delay,
+        webSocketSettings: uaSettings.webSocketSettings);
     _settings.sockets = <WebSocketInterface>[socket];
     _settings.uri = uaSettings.uri;
+    _settings.sip_message_delay = uaSettings.sip_message_delay;
+    _settings.realm = uaSettings.realm;
     _settings.password = uaSettings.password;
     _settings.authorization_jwt = uaSettings.authorization_jwt;
     _settings.ha1 = uaSettings.ha1;
@@ -685,6 +688,7 @@ class UaSettings {
   /// `User Agent` field for sip message.
   String? userAgent;
   String? uri;
+  String? realm;
   String? authorizationUser;
   String? password;
   String? ha1;
@@ -703,6 +707,8 @@ class UaSettings {
   /// ICE Gathering Timeout, default 500ms
   int iceGatheringTimeout = 500;
 
+  /// Sip Message Delay (in millisecond) (default 0).
+  int sip_message_delay = 0;
   List<Map<String, String>> iceServers = <Map<String, String>>[
     <String, String>{'url': 'stun:stun.l.google.com:19302'},
 // turn server configuration example.
