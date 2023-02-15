@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:hive/hive.dart';
 
 import 'config.dart' as config;
 import 'config.dart';
@@ -811,6 +812,8 @@ class UA extends EventManager {
   }
 
   void _loadConfig(Settings configuration) {
+    var box = Hive.box('instanceId');
+    String? instance_id_from_storage = box.get('instance_id');
     // Check and load the given configuration.
     try {
       config.load(configuration, _configuration);
@@ -827,8 +830,12 @@ class UA extends EventManager {
     }
 
     // Instance-id for GRUU.
-    _configuration.instance_id ??= Utils.newUUID();
-
+    if (instance_id_from_storage == null) {
+      _configuration.instance_id ??= Utils.newUUID();
+      box.put('instance_id', _configuration.instance_id);
+    } else {
+      _configuration.instance_id = instance_id_from_storage;
+    }
     // Jssip_id instance parameter. Static random tag of length 5.
     _configuration.jssip_id = Utils.createRandomToken(5);
 

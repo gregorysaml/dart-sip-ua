@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 
 import 'config.dart';
@@ -138,6 +139,7 @@ class SIPUAHelper extends EventManager {
     _settings.extra_Headers = uaSettings.extra_Headers;
 
     try {
+      var box = await Hive.openBox('instanceId');
       _ua = UA(_settings);
       _ua!.on(EventSocketConnecting(), (EventSocketConnecting event) {
         logger.d('connecting => $event');
