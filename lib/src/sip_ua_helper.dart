@@ -117,22 +117,22 @@ class SIPUAHelper extends EventManager {
     _settings = Settings();
     WebSocketInterface socket = WebSocketInterface(
         uaSettings.webSocketUrl, uaSettings.webSocketSettings);
-    _settings!.sockets = <WebSocketInterface>[socket];
-    _settings!.uri = uaSettings.uri;
-    _settings!.password = uaSettings.password;
-    _settings!.authorization_jwt = uaSettings.authorization_jwt;
-    _settings!.ha1 = uaSettings.ha1;
-    _settings!.display_name = uaSettings.displayName;
-    _settings!.authorization_user = uaSettings.authorizationUser;
-    _settings!.user_agent = uaSettings.userAgent ?? DartSIP_C.USER_AGENT;
-    _settings!.register = uaSettings.register;
-    _settings!.register_expires = uaSettings.register_expires;
-    _settings!.register_extra_contact_uri_params =
+    _settings.sockets = <WebSocketInterface>[socket];
+    _settings.uri = uaSettings.uri;
+    _settings.password = uaSettings.password;
+    _settings.authorization_jwt = uaSettings.authorization_jwt;
+    _settings.ha1 = uaSettings.ha1;
+    _settings.display_name = uaSettings.displayName;
+    _settings.authorization_user = uaSettings.authorizationUser;
+    _settings.user_agent = uaSettings.userAgent ?? DartSIP_C.USER_AGENT;
+    _settings.register = uaSettings.register;
+    _settings.register_expires = uaSettings.register_expires;
+    _settings.register_extra_contact_uri_params =
         uaSettings.registerParams.extraContactUriParams;
-    _settings!.dtmf_mode = uaSettings.dtmfMode;
-    _settings!.session_timers = uaSettings.sessionTimers;
-    _settings!.ice_gathering_timeout = uaSettings.iceGatheringTimeout;
-    _settings!.extra_Headers = uaSettings.extra_Headers;
+    _settings.dtmf_mode = uaSettings.dtmfMode;
+    _settings.session_timers = uaSettings.sessionTimers;
+    _settings.ice_gathering_timeout = uaSettings.iceGatheringTimeout;
+    _settings.extra_Headers = uaSettings.extra_Headers;
 
     try {
       _ua = UA(_settings);

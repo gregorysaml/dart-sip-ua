@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
@@ -23,7 +25,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
   };
   late SharedPreferences _preferences;
   late RegistrationState _registerState;
-
+  String? deviceId;
   SIPUAHelper? get helper => widget._helper;
 
   @override
@@ -93,9 +95,11 @@ class _MyRegisterWidget extends State<RegisterWidget>
   }
 
   void _handleSave(BuildContext context) {
-    if (_wsUriController.text == '') {
+    // // ignore: unnecessary_null_comparison
+    if (_wsUriController.text == null) {
       _alert(context, "WebSocket URL");
-    } else if (_sipUriController.text == '') {
+      //   // ignore: unnecessary_null_comparison
+    } else if (_sipUriController.text == null) {
       _alert(context, "SIP URI");
     }
 
@@ -104,7 +108,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
     settings.webSocketUrl = _wsUriController.text;
     settings.webSocketSettings.extraHeaders = _wsExtraHeaders;
     settings.webSocketSettings.allowBadCertificate = true;
-    //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+    // settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
 
     settings.uri = _sipUriController.text;
     settings.authorizationUser = _authorizationUserController.text;
@@ -112,6 +116,27 @@ class _MyRegisterWidget extends State<RegisterWidget>
     settings.displayName = _displayNameController.text;
     settings.userAgent = 'Dart SIP Client v1.0.0';
     settings.dtmfMode = DtmfMode.RFC2833;
+    settings.register = false;
+
+    // BlocProvider.of<SipBloc>(context).add(SipInitialClientRegister());
+    if (Platform.isAndroid) {
+      settings.registerParams.extraContactUriParams = <String, String>{
+        'pn-provider': 'fcm',
+        'pn_type': 'android',
+        'pn-param': 'voiceland-dev',
+        'pn-prid': 'firebase',
+        'pn_device':
+            'clvR90vdQGW7dxCaKH150b:APA91bG3dbR8uUZyZF7nrVypJfWHikQ4Pq75pXKOmGl7SpoS-RRY5wajj_0kaqD7QJJ5q9NYkKOb4mCHIUHAa-7PoC8ldFT7nlwUHi2pY07Xja_Rnss79UBKu97cllG20Wxiax4GCXBj'
+      };
+    } else {
+      settings.registerParams.extraContactUriParams = <String, String>{
+        'pn-provider': 'fcm',
+        'pn_type': 'ios',
+        'pn-param': 'voiceland-dev',
+        'pn-prid': '432423523455234523',
+        'pn_device': '52434523452345'
+      };
+    }
 
     helper!.start(settings);
   }
