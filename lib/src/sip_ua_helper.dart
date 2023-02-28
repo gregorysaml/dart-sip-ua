@@ -1,9 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
-
+import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'config.dart';
 import 'constants.dart' as DartSIP_C;
 import 'event_manager/event_manager.dart';
@@ -139,6 +140,9 @@ class SIPUAHelper extends EventManager {
     _settings.extra_Headers = uaSettings.extra_Headers;
 
     try {
+      Directory directory =
+          await pathProvider.getApplicationDocumentsDirectory();
+      Hive.init(directory.path);
       var box = await Hive.openBox('instanceId');
       _ua = UA(_settings);
       _ua!.on(EventSocketConnecting(), (EventSocketConnecting event) {
