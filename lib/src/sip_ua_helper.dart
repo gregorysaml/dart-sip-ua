@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart' as pathProvider;
+import 'package:sip_ua/src/map_helper.dart';
+import 'package:path_provider/path_provider.dart';
 import 'config.dart';
 import 'constants.dart' as DartSIP_C;
 import 'event_manager/event_manager.dart';
@@ -86,9 +87,13 @@ class SIPUAHelper extends EventManager {
   Future<bool> call(String target,
       {bool voiceonly = false,
       MediaStream? mediaStream,
-      List<String>? headers}) async {
+      List<String>? headers,
+      Map<String, dynamic>? customOptions}) async {
     if (_ua != null && _ua!.isConnected()) {
       Map<String, dynamic> options = buildCallOptions(voiceonly);
+      if (customOptions != null) {
+        options = MapHelper.merge(options, customOptions);
+      }
       if (mediaStream != null) {
         options['mediaStream'] = mediaStream;
       }
@@ -140,8 +145,7 @@ class SIPUAHelper extends EventManager {
     _settings.extra_Headers = uaSettings.extra_Headers;
 
     try {
-      Directory directory =
-          await pathProvider.getApplicationDocumentsDirectory();
+      Directory directory = await getApplicationDocumentsDirectory();
       Hive.init(directory.path);
       var box = await Hive.openBox('instanceId');
       _ua = UA(_settings);
@@ -301,7 +305,7 @@ class SIPUAHelper extends EventManager {
       }, buildCallOptions(true));
     });
 
-    Map<String, dynamic> _defaultOptions = <String, dynamic>{
+    Map<String, dynamic> defaultOptions = <String, dynamic>{
       'eventHandlers': handlers,
       'extraHeaders': <dynamic>[],
       'pcConfig': <String, dynamic>{
@@ -344,7 +348,7 @@ class SIPUAHelper extends EventManager {
       },
       'sessionTimersExpires': 120
     };
-    return _defaultOptions;
+    return defaultOptions;
   }
 
   Message sendMessage(String target, String body,
@@ -379,16 +383,16 @@ class SIPUAHelper extends EventManager {
 
   void _notifyTransportStateListeners(TransportState state) {
     // Copy to prevent concurrent modification exception
-    List<SipUaHelperListener> _listeners = _sipUaHelperListeners.toList();
-    for (SipUaHelperListener listener in _listeners) {
+    List<SipUaHelperListener> listeners = _sipUaHelperListeners.toList();
+    for (SipUaHelperListener listener in listeners) {
       listener.transportStateChanged(state);
     }
   }
 
   void _notifyRegistrationStateListeners(RegistrationState state) {
     // Copy to prevent concurrent modification exception
-    List<SipUaHelperListener> _listeners = _sipUaHelperListeners.toList();
-    for (SipUaHelperListener listener in _listeners) {
+    List<SipUaHelperListener> listeners = _sipUaHelperListeners.toList();
+    for (SipUaHelperListener listener in listeners) {
       listener.registrationStateChanged(state);
     }
   }
@@ -401,24 +405,24 @@ class SIPUAHelper extends EventManager {
     }
     call.state = state.state;
     // Copy to prevent concurrent modification exception
-    List<SipUaHelperListener> _listeners = _sipUaHelperListeners.toList();
-    for (SipUaHelperListener listener in _listeners) {
+    List<SipUaHelperListener> listeners = _sipUaHelperListeners.toList();
+    for (SipUaHelperListener listener in listeners) {
       listener.callStateChanged(call, state);
     }
   }
 
   void _notifyNewMessageListeners(SIPMessageRequest msg) {
     // Copy to prevent concurrent modification exception
-    List<SipUaHelperListener> _listeners = _sipUaHelperListeners.toList();
-    for (SipUaHelperListener listener in _listeners) {
+    List<SipUaHelperListener> listeners = _sipUaHelperListeners.toList();
+    for (SipUaHelperListener listener in listeners) {
       listener.onNewMessage(msg);
     }
   }
 
   void _notifyNotifyListeners(EventNotify event) {
     // Copy to prevent concurrent modification exception
-    List<SipUaHelperListener> _listeners = _sipUaHelperListeners.toList();
-    for (SipUaHelperListener listener in _listeners) {
+    List<SipUaHelperListener> listeners = _sipUaHelperListeners.toList();
+    for (SipUaHelperListener listener in listeners) {
       listener.onNewNotify(Notify(request: event.request));
     }
   }
