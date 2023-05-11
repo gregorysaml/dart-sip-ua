@@ -112,7 +112,7 @@ class SIPUAHelper extends EventManager {
     return _calls[id];
   }
 
-  void start(UaSettings uaSettings) async {
+  Future<void> start(UaSettings uaSettings) async {
     if (_ua != null) {
       logger.w('UA instance already exist!, stopping UA and creating a one...');
       _ua!.stop();
@@ -352,8 +352,8 @@ class SIPUAHelper extends EventManager {
   }
 
   Message sendMessage(String target, String body,
-      [Map<String, dynamic>? options]) {
-    return _ua!.sendMessage(target, body, options);
+      [Map<String, dynamic>? options, Map<String, dynamic>? params]) {
+    return _ua!.sendMessage(target, body, options, params);
   }
 
   void subscribe(String target, String event, String contentType) {
