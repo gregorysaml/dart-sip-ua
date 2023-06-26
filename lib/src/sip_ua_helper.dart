@@ -143,6 +143,8 @@ class SIPUAHelper extends EventManager {
     _settings.session_timers = uaSettings.sessionTimers;
     _settings.ice_gathering_timeout = uaSettings.iceGatheringTimeout;
     _settings.extra_Headers = uaSettings.extra_Headers;
+    _settings.session_timers_refresh_method =
+        uaSettings.sessionTimersRefreshMethod;
 
     try {
       Directory directory = await getApplicationDocumentsDirectory();
@@ -235,8 +237,10 @@ class SIPUAHelper extends EventManager {
     });
     handlers.on(EventCallProgress(), (EventCallProgress event) {
       logger.d('call is in progress');
-      _notifyCallStateListeners(event,
-          CallState(CallStateEnum.PROGRESS, originator: event.originator));
+      _notifyCallStateListeners(
+          event,
+          CallState(CallStateEnum.PROGRESS,
+              originator: event.originator, cause: event.cause));
     });
     handlers.on(EventCallFailed(), (EventCallFailed event) {
       logger.d('call failed with cause: ${event.cause}');
@@ -737,4 +741,9 @@ class UaSettings {
 //      'credential': 'change_to_real_secret'
 //    },
   ];
+
+  /// Controls which kind of messages are to be sent to keep a SIP session
+  /// alive.
+  /// Defaults to "UPDATE"
+  DartSIP_C.SipMethod sessionTimersRefreshMethod = DartSIP_C.SipMethod.UPDATE;
 }
