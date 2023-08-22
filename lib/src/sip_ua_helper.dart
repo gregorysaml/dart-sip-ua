@@ -218,7 +218,7 @@ class SIPUAHelper extends EventManager {
 
       _ua!.start();
     } catch (event, s) {
-      logger.e(event.toString(),stackTrace: s);
+      logger.e(event.toString(),error: null,stackTrace: s);
     }
   }
 
