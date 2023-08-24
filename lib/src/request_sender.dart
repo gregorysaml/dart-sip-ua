@@ -72,9 +72,9 @@ class RequestSender {
     }
     // logger.debug('headers ${_ua.configuration!.authorization_jwt!}');
 
-    if (_ua.configuration?.authorization_jwt != null) {
+    if (_ua.configuration.authorization_jwt != null) {
       _request!.headers['Authorization'] = <String>[
-        'Bearer ${_ua.configuration!.authorization_jwt!}'
+        'Bearer ${_ua.configuration.authorization_jwt!}'
       ];
     }
 

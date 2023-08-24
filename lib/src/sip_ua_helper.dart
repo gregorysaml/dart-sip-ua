@@ -145,11 +145,11 @@ class SIPUAHelper extends EventManager {
     _settings.extra_Headers = uaSettings.extra_Headers;
     _settings.session_timers_refresh_method =
         uaSettings.sessionTimersRefreshMethod;
+    _settings.instance_id = uaSettings.instanceId;
 
     try {
       Directory directory = await getApplicationDocumentsDirectory();
       Hive.init(directory.path);
-      var box = await Hive.openBox('instanceId');
       _ua = UA(_settings);
       _ua!.on(EventSocketConnecting(), (EventSocketConnecting event) {
         logger.d('connecting => $event');
@@ -717,6 +717,7 @@ class UaSettings {
   String? ha1;
   String? displayName;
   String? authorization_jwt;
+  String? instanceId;
 
   /// DTMF mode, in band (rfc2833) or out of band (sip info)
   DtmfMode dtmfMode = DtmfMode.INFO;
