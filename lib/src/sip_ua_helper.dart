@@ -102,8 +102,8 @@ class SIPUAHelper extends EventManager {
       _ua!.call(target, options);
       return true;
     } else {
-      logger.e(
-          'Not connected, you will need to register.',error: null,stackTrace: StackTraceNJ());
+      logger.e('Not connected, you will need to register.',
+          error: null, stackTrace: StackTraceNJ());
     }
     return false;
   }
@@ -150,6 +150,7 @@ class SIPUAHelper extends EventManager {
     try {
       Directory directory = await getApplicationDocumentsDirectory();
       Hive.init(directory.path);
+      var box = await Hive.openBox('instanceId');
       _ua = UA(_settings);
       _ua!.on(EventSocketConnecting(), (EventSocketConnecting event) {
         logger.d('connecting => $event');
@@ -218,7 +219,7 @@ class SIPUAHelper extends EventManager {
 
       _ua!.start();
     } catch (event, s) {
-      logger.e(event.toString(),error: null,stackTrace: s);
+      logger.e(event.toString(), error: null, stackTrace: s);
     }
   }
 
