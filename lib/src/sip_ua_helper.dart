@@ -146,6 +146,7 @@ class SIPUAHelper extends EventManager {
     _settings.session_timers_refresh_method =
         uaSettings.sessionTimersRefreshMethod;
     _settings.instance_id = uaSettings.instanceId;
+    _settings.registrar_server = uaSettings.registrarServer;
 
     try {
       Directory directory = await getApplicationDocumentsDirectory();
@@ -719,6 +720,7 @@ class UaSettings {
   String? displayName;
   String? authorization_jwt;
   String? instanceId;
+  String? registrarServer;
 
   /// DTMF mode, in band (rfc2833) or out of band (sip info)
   DtmfMode dtmfMode = DtmfMode.INFO;
