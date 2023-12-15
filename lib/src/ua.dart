@@ -332,7 +332,7 @@ class UA extends EventManager {
             rtcSession.terminate();
           }
         } catch (error, s) {
-          logger.e(error.toString(),error: null,stackTrace: s);
+          logger.e(error.toString(), error: null, stackTrace: s);
         }
       }
     });
@@ -345,7 +345,7 @@ class UA extends EventManager {
           Subscriber subscriber = _subscribers[key]!;
           subscriber.terminate(null);
         } catch (error, s) {
-          logger.e(error.toString(),error: null,stackTrace: s);
+          logger.e(error.toString(), error: null, stackTrace: s);
         }
       }
     });
