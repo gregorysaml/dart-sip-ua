@@ -103,7 +103,11 @@ class SIPUAHelper extends EventManager {
       return true;
     } else {
       logger.e('Not connected, you will need to register.',
+<<<<<<< HEAD
           error: null, stackTrace: StackTraceNJ());
+=======
+          stackTrace: StackTraceNJ());
+>>>>>>> ec6617230a05fad7db8ff4024eeeb97ce600d5d7
     }
     return false;
   }
@@ -219,8 +223,13 @@ class SIPUAHelper extends EventManager {
       });
 
       _ua!.start();
+<<<<<<< HEAD
     } catch (event, s) {
       logger.e(event.toString(), error: null, stackTrace: s);
+=======
+    } catch (e, s) {
+      logger.e(e.toString(), error: e, stackTrace: s);
+>>>>>>> ec6617230a05fad7db8ff4024eeeb97ce600d5d7
     }
   }
 

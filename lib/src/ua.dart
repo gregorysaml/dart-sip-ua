@@ -331,8 +331,13 @@ class UA extends EventManager {
           if (!rtcSession.isEnded()) {
             rtcSession.terminate();
           }
+<<<<<<< HEAD
         } catch (error, s) {
           logger.e(error.toString(), error: null, stackTrace: s);
+=======
+        } catch (e, s) {
+          logger.e(e.toString(), error: e, stackTrace: s);
+>>>>>>> ec6617230a05fad7db8ff4024eeeb97ce600d5d7
         }
       }
     });
@@ -344,8 +349,13 @@ class UA extends EventManager {
         try {
           Subscriber subscriber = _subscribers[key]!;
           subscriber.terminate(null);
+<<<<<<< HEAD
         } catch (error, s) {
           logger.e(error.toString(), error: null, stackTrace: s);
+=======
+        } catch (e, s) {
+          logger.e(e.toString(), error: e, stackTrace: s);
+>>>>>>> ec6617230a05fad7db8ff4024eeeb97ce600d5d7
         }
       }
     });
