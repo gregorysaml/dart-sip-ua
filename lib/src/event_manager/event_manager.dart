@@ -69,11 +69,7 @@ class EventManager {
       targets.remove(listener);
       targets.add(listener);
     } catch (e, s) {
-<<<<<<< HEAD
-      logger.e(e.toString(),error: null,stackTrace: s);
-=======
       logger.e(e.toString(), error: e, stackTrace: s);
->>>>>>> ec6617230a05fad7db8ff4024eeeb97ce600d5d7
     }
   }
 
@@ -112,11 +108,7 @@ class EventManager {
           //   logger.w("invoking $event on $target");
           target(event);
         } catch (e, s) {
-<<<<<<< HEAD
-          logger.e(e.toString(),error: null,stackTrace: s);
-=======
           logger.e(e.toString(), error: e, stackTrace: s);
->>>>>>> ec6617230a05fad7db8ff4024eeeb97ce600d5d7
         }
       }
     }

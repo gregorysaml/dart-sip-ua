@@ -2294,11 +2294,7 @@ class RTCSession extends EventManager implements Owner {
 
       request_sender.send();
     } catch (error, s) {
-<<<<<<< HEAD
-      logger.e(error.toString(), error: null, stackTrace: s);
-=======
       logger.e(error.toString(), error: error, stackTrace: s);
->>>>>>> ec6617230a05fad7db8ff4024eeeb97ce600d5d7
       _failed('local', null, null, null, 500, DartSIP_C.CausesType.WEBRTC_ERROR,
           'Can\'t create local SDP');
       if (_status == C.STATUS_TERMINATED) {
@@ -2564,11 +2560,7 @@ class RTCSession extends EventManager implements Owner {
         'eventHandlers': handlers
       });
     } catch (e, s) {
-<<<<<<< HEAD
-      logger.e(e.toString(), error: null, stackTrace: s);
-=======
       logger.e(e.toString(), error: e, stackTrace: s);
->>>>>>> ec6617230a05fad7db8ff4024eeeb97ce600d5d7
       onFailed();
     }
   }
