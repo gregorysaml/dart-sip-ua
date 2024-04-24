@@ -749,5 +749,5 @@ class UaSettings {
   /// Controls which kind of messages are to be sent to keep a SIP session
   /// alive.
   /// Defaults to "UPDATE"
-  DartSIP_C.SipMethod sessionTimersRefreshMethod = DartSIP_C.SipMethod.UPDATE;
+  DartSIP_C.SipMethod sessionTimersRefreshMethod = DartSIP_C.SipMethod.INVITE;
 }

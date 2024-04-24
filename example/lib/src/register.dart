@@ -120,7 +120,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
     settings.webSocketUrl = _wsUriController.text;
     settings.webSocketSettings.extraHeaders = _wsExtraHeaders;
     settings.webSocketSettings.allowBadCertificate = true;
-    // settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
+    settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
 
     settings.uri = _sipUriController.text;
     settings.authorizationUser = _authorizationUserController.text;
