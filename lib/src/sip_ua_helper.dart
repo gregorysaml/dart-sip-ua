@@ -4,13 +4,17 @@ import 'dart:io';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
+<<<<<<< HEAD
 import 'package:sip_ua/src/map_helper.dart';
 import 'package:path_provider/path_provider.dart';
 
+=======
+>>>>>>> 11b02e6dfae4506653f533c1595d5241c5bcdbfb
 import 'package:sip_ua/sip_ua.dart';
 import 'package:sip_ua/src/map_helper.dart';
 import 'package:sip_ua/src/transports/socket_interface.dart';
 import 'package:sip_ua/src/transports/tcp_socket.dart';
+
 import 'config.dart';
 import 'constants.dart' as DartSIP_C;
 import 'event_manager/event_manager.dart';
@@ -340,6 +344,9 @@ class SIPUAHelper extends EventManager {
       'extraHeaders': <dynamic>[],
       'pcConfig': <String, dynamic>{
         'sdpSemantics': 'unified-plan',
+        'iceTransportPolicy':
+            (_uaSettings?.iceTransportPolicy ?? IceTransportPolicy.ALL)
+                .toParameterString(),
         'iceServers': _uaSettings?.iceServers
       },
       'mediaConstraints': <String, dynamic>{
@@ -733,6 +740,31 @@ enum DtmfMode {
   RFC2833,
 }
 
+/// Possible values for the transport policy to be used when selecting ICE
+/// candidates.
+///
+/// See: https://udn.realityripple.com/docs/Web/API/RTCConfiguration
+enum IceTransportPolicy {
+  /// All ICE candidates will be considered.
+  /// This is the default if not specified explicitly.
+  ALL,
+
+  /// Only ICE candidates whose IP addresses are being relayed, such as those
+  /// being passed through a TURN server, will be considered.
+  RELAY,
+}
+
+extension _IceTransportPolicyEncoding on IceTransportPolicy {
+  String toParameterString() {
+    switch (this) {
+      case IceTransportPolicy.ALL:
+        return 'all';
+      case IceTransportPolicy.RELAY:
+        return 'relay';
+    }
+  }
+}
+
 class UaSettings {
   WebSocketSettings webSocketSettings = WebSocketSettings();
   TcpSocketSettings tcpSocketSettings = TcpSocketSettings();
@@ -788,6 +820,11 @@ class UaSettings {
 //      'credential': 'change_to_real_secret'
 //    },
   ];
+
+  /// Defines the transport policy to be used for ICE.
+  /// See [IceTransportPolicy] for possible values.
+  /// Will default to [IceTransportPolicy.ALL] if not specified.
+  IceTransportPolicy? iceTransportPolicy;
 
   /// Controls which kind of messages are to be sent to keep a SIP session
   /// alive.
