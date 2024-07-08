@@ -4,12 +4,9 @@ import 'dart:io';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
-<<<<<<< HEAD
 import 'package:sip_ua/src/map_helper.dart';
 import 'package:path_provider/path_provider.dart';
 
-=======
->>>>>>> 11b02e6dfae4506653f533c1595d5241c5bcdbfb
 import 'package:sip_ua/sip_ua.dart';
 import 'package:sip_ua/src/map_helper.dart';
 import 'package:sip_ua/src/transports/socket_interface.dart';
