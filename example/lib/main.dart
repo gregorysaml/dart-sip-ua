@@ -2,12 +2,9 @@ import 'package:dart_sip_ua_example/src/theme_provider.dart';
 import 'package:flutter/foundation.dart'
     show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-=======
 import 'package:logger/logger.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:provider/provider.dart';
->>>>>>> 9b9bd5f1c9f0c2d51c36b37bf11aa381723efa14
 import 'package:sip_ua/sip_ua.dart';
 
 import 'src/about.dart';
@@ -16,9 +13,6 @@ import 'src/dialpad.dart';
 import 'src/register.dart';
 
 void main() {
-<<<<<<< HEAD
-  runApp(MyApp());
-=======
   Logger.level = Level.warning;
   if (WebRTC.platformIsDesktop) {
     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
@@ -29,7 +23,6 @@ void main() {
       child: MyApp(),
     ),
   );
->>>>>>> 9b9bd5f1c9f0c2d51c36b37bf11aa381723efa14
 }
 
 typedef PageContentBuilder = Widget Function(
