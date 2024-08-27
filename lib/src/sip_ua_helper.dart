@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sdp_transform/sdp_transform.dart' as sdp_transform;
 import 'package:sip_ua/sip_ua.dart';
 import 'package:sip_ua/src/event_manager/internal_events.dart';
@@ -191,6 +192,9 @@ class SIPUAHelper extends EventManager {
         uaSettings.terminateOnMediaPortZero;
 
     try {
+      Directory directory = await getApplicationDocumentsDirectory();
+      Hive.init(directory.path);
+      var box = await Hive.openBox('instanceId');
       _ua = UA(_settings);
       _ua!.on(EventSocketConnecting(), (EventSocketConnecting event) {
         logger.d('connecting => $event');
