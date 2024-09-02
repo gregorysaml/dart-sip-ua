@@ -17,7 +17,7 @@ dependencies:
   random_string: ^2.3.1
   recase: ^4.1.0
   sdp_transform: ^0.3.2
-  uuid: ^3.0.1
+  uuid: ^4.2.1
 
   hive: ^2.2.3
   path_provider: ^2.0.13
