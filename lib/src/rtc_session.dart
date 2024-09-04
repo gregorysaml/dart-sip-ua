@@ -314,7 +314,7 @@ class RTCSession extends EventManager implements Owner {
       requestParams['from_display_name'] = options['from_display_name'] ?? '';
       requestParams['from_uri'] = URI.parse(options['from_uri']);
       extraHeaders
-        .add('P-Preferred-Identity: ${_ua.configuration.uri.toString()}');
+          .add('P-Preferred-Identity: ${_ua.configuration.uri.toString()}');
     }
 
     if (anonymous) {
@@ -1067,18 +1067,18 @@ class RTCSession extends EventManager implements Owner {
       });
     });
 
-    if (options['useUpdate'] != null) {
-      _sendUpdate(<String, dynamic>{
-        'sdpOffer': true,
-        'eventHandlers': handlers,
-        'extraHeaders': options['extraHeaders']
-      });
-    } else {
-      _sendReinvite(<String, dynamic>{
-        'eventHandlers': handlers,
-        'extraHeaders': options['extraHeaders']
-      });
-    }
+    // if (options['useUpdate'] != null) {
+    //   _sendUpdate(<String, dynamic>{
+    //     'sdpOffer': true,
+    //     'eventHandlers': handlers,
+    //     'extraHeaders': options['extraHeaders']
+    //   });
+    // } else {
+    _sendReinvite(<String, dynamic>{
+      'eventHandlers': handlers,
+      'extraHeaders': options['extraHeaders']
+      // });
+    });
 
     return true;
   }
@@ -2937,7 +2937,7 @@ class RTCSession extends EventManager implements Owner {
   }
 
   /// SDP offers may contain text media channels. e.g. Older clients using linphone.
-  /// 
+  ///
   /// WebRTC does not support text media channels, so remove them.
   String? _sdpOfferToWebRTC(String? sdpInput) {
     if (sdpInput == null) {
