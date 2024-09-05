@@ -1067,18 +1067,18 @@ class RTCSession extends EventManager implements Owner {
       });
     });
 
-    // if (options['useUpdate'] != null) {
-    //   _sendUpdate(<String, dynamic>{
-    //     'sdpOffer': true,
-    //     'eventHandlers': handlers,
-    //     'extraHeaders': options['extraHeaders']
-    //   });
-    // } else {
-    _sendReinvite(<String, dynamic>{
-      'eventHandlers': handlers,
-      'extraHeaders': options['extraHeaders']
-      // });
-    });
+    if (options['useUpdate'] != null) {
+      _sendUpdate(<String, dynamic>{
+        'sdpOffer': true,
+        'eventHandlers': handlers,
+        'extraHeaders': options['extraHeaders']
+      });
+    } else {
+      _sendReinvite(<String, dynamic>{
+        'eventHandlers': handlers,
+        'extraHeaders': options['extraHeaders']
+      });
+    }
 
     return true;
   }
@@ -1656,7 +1656,7 @@ class RTCSession extends EventManager implements Owner {
   Future<RTCSessionDescription> _createLocalDescription(
       String type, Map<String, dynamic>? constraints) async {
     logger.d('createLocalDescription()');
-    // _iceGatheringState ??= RTCIceGatheringState.RTCIceGatheringStateNew;
+    _iceGatheringState ??= RTCIceGatheringState.RTCIceGatheringStateNew;
     Completer<RTCSessionDescription> completer =
         Completer<RTCSessionDescription>();
 
