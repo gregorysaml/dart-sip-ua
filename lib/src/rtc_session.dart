@@ -2574,55 +2574,55 @@ class RTCSession extends EventManager implements Owner {
     Map<String, dynamic>? rtcOfferConstraints =
         options['rtcOfferConstraints'] ?? _rtcOfferConstraints;
 
-    Map<String, dynamic> mediaConstraints =
-        options['mediaConstraints'] ?? <String, dynamic>{};
+    // Map<String, dynamic> mediaConstraints =
+    //     options['mediaConstraints'] ?? <String, dynamic>{};
 
-    dynamic sdpSemantics =
-        options['pcConfig']?['sdpSemantics'] ?? 'unified-plan';
+    // dynamic sdpSemantics =
+    //     options['pcConfig']?['sdpSemantics'] ?? 'unified-plan';
 
-    bool hasVideo = (options['mediaConstraints']?['video'] ?? false) != false;
+    // bool hasVideo = (options['mediaConstraints']?['video'] ?? false) != false;
 
-    try {
-      MediaStream localStream =
-          await navigator.mediaDevices.getUserMedia(mediaConstraints);
-      _localMediaStreamLocallyGenerated = true;
-      _localMediaStream = localStream;
+    // try {
+    //   MediaStream localStream =
+    //       await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    //   _localMediaStreamLocallyGenerated = true;
+    //   _localMediaStream = localStream;
 
-      emit(
-          EventStream(session: this, originator: 'local', stream: localStream));
+    //   emit(
+    //       EventStream(session: this, originator: 'local', stream: localStream));
 
-      switch (sdpSemantics) {
-        case 'unified-plan':
-          localStream.getTracks().forEach((MediaStreamTrack track) {
-            if (track.kind == 'video' && hasVideo) {
-              _connection!.addTrack(track, localStream);
-            }
-          });
-          break;
-        case 'plan-b':
-          _connection!.addStream(localStream);
-          break;
-        default:
-          logger.e('Unkown sdp semantics $sdpSemantics');
-          throw Exceptions.NotReadyError('Unkown sdp semantics $sdpSemantics');
-      }
-    } catch (error) {
-      if (_status == C.STATUS_TERMINATED) {
-        throw Exceptions.InvalidStateError('terminated');
-      }
-      request.reply(480);
-      _failed(
-          'local',
-          null,
-          null,
-          null,
-          480,
-          DartSIP_C.CausesType.USER_DENIED_MEDIA_ACCESS,
-          'User Denied Media Access');
-      logger.e('emit "getusermediafailed" [error:${error.toString()}]');
-      emit(EventGetUserMediaFailed(exception: error));
-      throw Exceptions.InvalidStateError('getUserMedia() failed');
-    }
+    //   switch (sdpSemantics) {
+    //     case 'unified-plan':
+    //       localStream.getTracks().forEach((MediaStreamTrack track) {
+    //         if (track.kind == 'video' && hasVideo) {
+    //           _connection!.addTrack(track, localStream);
+    //         }
+    //       });
+    //       break;
+    //     case 'plan-b':
+    //       _connection!.addStream(localStream);
+    //       break;
+    //     default:
+    //       logger.e('Unkown sdp semantics $sdpSemantics');
+    //       throw Exceptions.NotReadyError('Unkown sdp semantics $sdpSemantics');
+    //   }
+    // } catch (error) {
+    //   if (_status == C.STATUS_TERMINATED) {
+    //     throw Exceptions.InvalidStateError('terminated');
+    //   }
+    //   request.reply(480);
+    //   _failed(
+    //       'local',
+    //       null,
+    //       null,
+    //       null,
+    //       480,
+    //       DartSIP_C.CausesType.USER_DENIED_MEDIA_ACCESS,
+    //       'User Denied Media Access');
+    //   logger.e('emit "getusermediafailed" [error:${error.toString()}]');
+    //   emit(EventGetUserMediaFailed(exception: error));
+    //   throw Exceptions.InvalidStateError('getUserMedia() failed');
+    // }
 
     bool succeeded = false;
 
