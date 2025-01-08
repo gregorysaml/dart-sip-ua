@@ -1,13 +1,11 @@
-import 'package:sip_ua/sip_ua.dart';
-import 'package:sip_ua/src/transports/socket_interface.dart';
-import 'package:sip_ua/src/transports/tcp_socket.dart';
+import '../sip_ua.dart';
 import 'constants.dart' as DartSIP_C;
 import 'constants.dart';
 import 'exceptions.dart' as Exceptions;
 import 'grammar.dart';
 import 'logger.dart';
+import 'transports/socket_interface.dart';
 import 'transports/web_socket.dart';
-import 'uri.dart';
 import 'utils.dart' as Utils;
 
 // Default settings.
@@ -91,7 +89,7 @@ class Checks {
        *  List of Objects and Socket: [{socket: socket1}, socket2]
        */
       List<SIPUASocketInterface> copy = <SIPUASocketInterface>[];
-      if (sockets is List && sockets!.length > 0) {
+      if (sockets is List && sockets!.isNotEmpty) {
         for (SIPUASocketInterface socket in sockets) {
           copy.add(socket);
         }
@@ -304,6 +302,6 @@ void load(Settings src, Settings? dst) {
     });
   } catch (e) {
     logger.e('Failed to load config: ${e.toString()}');
-    throw e;
+    rethrow;
   }
 }
