@@ -1,6 +1,7 @@
-import 'dart:io';
-
+import 'package:dart_sip_ua_example/src/user_state/sip_user.dart';
+import 'package:dart_sip_ua_example/src/user_state/sip_user_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sip_ua/sip_ua.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -33,6 +34,8 @@ class _MyRegisterWidget extends State<RegisterWidget>
   TransportType _selectedTransport = TransportType.TCP;
 
   SIPUAHelper? get helper => widget._helper;
+
+  late SipUserCubit currentUser;
 
   @override
   void initState() {
@@ -100,73 +103,38 @@ class _MyRegisterWidget extends State<RegisterWidget>
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('$alertFieldName is empty'),
-          content: Text('Please enter $alertFieldName!'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Ok'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+            title: Text('$alertFieldName is empty'),
+            content: Text('Please enter $alertFieldName!'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ]);
       },
     );
   }
 
-  void _handleSave(BuildContext context) {
-    // // ignore: unnecessary_null_comparison
-    if (_wsUriController.text == null) {
+  void _register(BuildContext context) {
+    if (_wsUriController.text == '') {
       _alert(context, "WebSocket URL");
       //   // ignore: unnecessary_null_comparison
     } else if (_sipUriController.text == null) {
       _alert(context, "SIP URI");
     }
 
-    UaSettings settings = UaSettings();
+    _saveSettings();
 
-    settings.port = _portController.text;
-    settings.webSocketSettings.extraHeaders = _wsExtraHeaders;
-    settings.webSocketSettings.allowBadCertificate = true;
-    settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
-
-    //settings.webSocketSettings.userAgent = 'Dart/2.8 (dart:io) for OpenSIPS.';
-    settings.tcpSocketSettings.allowBadCertificate = true;
-    settings.transportType = _selectedTransport;
-    settings.uri = _sipUriController.text;
-    settings.webSocketUrl = _wsUriController.text;
-    settings.host = _sipUriController.text.split('@')[1];
-    settings.authorizationUser = _authorizationUserController.text;
-    settings.password = _passwordController.text;
-    settings.displayName = _displayNameController.text;
-    settings.userAgent = 'Dart SIP Client v1.0.0';
-    settings.dtmfMode = DtmfMode.RFC2833;
-    settings.register = true;
-    settings.iceServers = [];
-
-    // BlocProvider.of<SipBloc>(context).add(SipInitialClientRegister());
-    if (Platform.isAndroid) {
-      settings.registerParams.extraContactUriParams = <String, String>{
-        'pn-provider': 'fcm',
-        'pn_type': 'android',
-        'pn-param': 'voiceland-dev',
-        'pn-prid': 'firebase',
-        'pn_device':
-            'clvR90vdQGW7dxCaKH150b:APA91bG3dbR8uUZyZF7nrVypJfWHikQ4Pq75pXKOmGl7SpoS-RRY5wajj_0kaqD7QJJ5q9NYkKOb4mCHIUHAa-7PoC8ldFT7nlwUHi2pY07Xja_Rnss79UBKu97cllG20Wxiax4GCXBj'
-      };
-    } else {
-      settings.registerParams.extraContactUriParams = <String, String>{
-        'pn-provider': 'fcm',
-        'pn_type': 'ios',
-        'pn-param': 'voiceland-dev',
-        'pn-prid': '432423523455234523',
-        'pn_device': '52434523452345'
-      };
-    }
-    settings.contact_uri = 'sip:${_sipUriController.text}';
-
-    helper!.start(settings);
+    currentUser.register(SipUser(
+        selectedTransport: _selectedTransport,
+        wsExtraHeaders: _wsExtraHeaders,
+        sipUri: _sipUriController.text,
+        port: _portController.text,
+        displayName: _displayNameController.text,
+        password: _passwordController.text,
+        authUser: _authorizationUserController.text));
   }
 
   @override
@@ -174,6 +142,8 @@ class _MyRegisterWidget extends State<RegisterWidget>
     Color? textColor = Theme.of(context).textTheme.bodyMedium?.color;
     Color? textFieldFill =
         Theme.of(context).buttonTheme.colorScheme?.surfaceContainerLowest;
+    currentUser = context.watch<SipUserCubit>();
+
     OutlineInputBorder border = OutlineInputBorder(
       borderSide: BorderSide.none,
       borderRadius: BorderRadius.circular(5),
@@ -196,7 +166,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
                     height: 40,
                     child: ElevatedButton(
                       child: Text('Register'),
-                      onPressed: () => _handleSave(context),
+                      onPressed: () => _register(context),
                     ),
                   ),
                 ),

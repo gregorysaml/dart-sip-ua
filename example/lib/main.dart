@@ -60,11 +60,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: Provider.of<ThemeProvider>(context).currentTheme,
-      initialRoute: '/',
-      onGenerateRoute: _onGenerateRoute,
+    return MultiProvider(
+      providers: [
+        Provider<SIPUAHelper>.value(value: _helper),
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: Provider.of<ThemeProvider>(context).currentTheme,
+        initialRoute: '/',
+        onGenerateRoute: _onGenerateRoute,
+      ),
     );
   }
 }

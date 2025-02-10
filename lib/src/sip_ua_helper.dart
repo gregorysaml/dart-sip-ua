@@ -1,11 +1,15 @@
+// Dart imports:
 import 'dart:async';
 import 'dart:io';
 
+// Package imports:
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sdp_transform/sdp_transform.dart' as sdp_transform;
 
+// Project imports:
+import 'package:sip_ua/src/uri.dart';
 import 'config.dart';
 import 'constants.dart' as DartSIP_C;
 import 'enums.dart';
@@ -26,6 +30,7 @@ import 'transports/socket_interface.dart';
 import 'transports/tcp_socket.dart';
 import 'transports/web_socket.dart';
 import 'ua.dart';
+import 'utils.dart' as Utils;
 
 class SIPUAHelper extends EventManager {
   SIPUAHelper({Logger? customLogger}) {
@@ -84,12 +89,13 @@ class SIPUAHelper extends EventManager {
     _ua!.register();
   }
 
-  void unregister([bool all = true]) {
+  Future<bool> unregister([bool all = true]) async {
     if (_ua != null) {
       assert(registered, 'ERROR: you must call register first.');
-      _ua!.unregister(all: all);
+      return _ua!.unregister(all: all);
     } else {
       logger.e('ERROR: unregister called, you must call start first.');
+      return false;
     }
   }
 
@@ -163,7 +169,8 @@ class SIPUAHelper extends EventManager {
     }
 
     _settings.transportType = uaSettings.transportType!;
-    _settings.uri = uaSettings.uri;
+    _settings.uri =
+        uaSettings.uri != null ? Utils.normalizeTarget(uaSettings.uri!) : null;
     _settings.sip_message_delay = uaSettings.sip_message_delay;
     _settings.realm = uaSettings.realm;
     _settings.password = uaSettings.password;
@@ -185,7 +192,9 @@ class SIPUAHelper extends EventManager {
         uaSettings.sessionTimersRefreshMethod;
     _settings.instance_id = uaSettings.instanceId;
     _settings.registrar_server = uaSettings.registrarServer;
-    _settings.contact_uri = uaSettings.contact_uri;
+    _settings.contact_uri = uaSettings.contact_uri != null
+        ? Utils.normalizeTarget(uaSettings.contact_uri!)
+        : null;
     _settings.connection_recovery_max_interval =
         uaSettings.connectionRecoveryMaxInterval;
     _settings.connection_recovery_min_interval =
@@ -586,6 +595,8 @@ class Call {
     } else {
       logger.d("peerConnection is null, can't stop tracks.");
     }
+
+    if (state == CallStateEnum.ENDED) return;
     _session.terminate(options);
   }
 
