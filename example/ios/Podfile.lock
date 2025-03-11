@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_webrtc (0.12.2):
+  - flutter_webrtc (0.12.6):
     - Flutter
     - WebRTC-SDK (= 125.6422.06)
   - path_provider_foundation (0.0.1):
@@ -38,12 +38,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_webrtc: 1a53bd24f97bcfeff512f13699e721897f261563
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
-  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  flutter_webrtc: 57f32415b8744e806f9c2a96ccdb60c6a627ba33
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7
   WebRTC-SDK: 79942c006ea64f6fb48d7da8a4786dfc820bc1db
 
 PODFILE CHECKSUM: a5dd15803c05a42a9ae1068254e24631f03bf853
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

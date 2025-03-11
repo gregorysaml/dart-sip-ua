@@ -1863,6 +1863,7 @@ class RTCSession extends EventManager implements Owner {
 
   /// In dialog INVITE Reception
   void _receiveReinvite(IncomingRequest request) async {
+    print("\n\n\n\n USING LOCALLL RECEIVE REINVITE \n\n\n\n");
     logger.d('receiveReinvite()');
     String? contentType = request.getHeader('Content-Type');
 
@@ -2065,11 +2066,20 @@ class RTCSession extends EventManager implements Owner {
       Map<String, dynamic> mediaConstraints = <String, dynamic>{
         'audio': true,
         'video': <String, dynamic>{
-          'mandatory': <String, dynamic>{
-            'minWidth': '640',
-            'minHeight': '480',
-            'minFrameRate': '30',
+          'mandatory': <String,dynamic>{
+            'minWidth': '320',
+            'minHeight': '240',
+            'maxWidth': '320',
+            'maxHeight': '240',
+            'minFrameRate': '15',
+            'maxFrameRate': '15'
           },
+          //
+          // 'mandatory': <String, dynamic>{
+          //   'minWidth': '640',
+          //   'minHeight': '480',
+          //   'minFrameRate': '10',
+          // },
           'facingMode': 'user',
         }
       };
@@ -2105,7 +2115,7 @@ class RTCSession extends EventManager implements Owner {
             'Remote wants to upgrade to video but no camera available to send');
       }
     }
-
+    print("\n\n\n\n\n\n\n ABOUT TO CALL SDP OFFER TO WEB RTTC \n\n\n\n\n\n");
     logger.d('emit "sdp"');
     final String? processedSDP = _sdpOfferToWebRTC(request.body);
     emit(EventSdp(
@@ -3134,7 +3144,154 @@ class RTCSession extends EventManager implements Owner {
     }
     sdp['media'] = mediaList;
 
+    // Handle codec filtering for devices with H264 issues (like AVA)
+    // if (_ua.configuration.filter_h264_codec == true) {
+    // _filterH264Codec(sdp);
+    // }
+    _optimizeVideoCodecs(sdp);
+
     return sdp_transform.write(sdp, null);
+  }
+
+  void _optimizeVideoCodecs(Map<String, dynamic> sdp) {
+    print("\n\n\n\n\n OPTIMIZING VIDEO CODECS \n\n\n\n\n");
+
+    bool isAvaDevice = true; // Set based on your device detection logic
+
+    for (Map<String, dynamic> media in sdp['media']) {
+      if (media['type'] == 'video') {
+        // Get all codec entries with proper casting
+        List<dynamic> rtpDynamic = media['rtp'] ?? <dynamic>[];
+        List<dynamic> fmtpDynamic = media['fmtp'] ?? <dynamic>[];
+
+        // Find payload types for different codecs
+        List<int> h264PayloadTypes = <int>[];
+        List<int> vpPayloadTypes = <int>[];
+
+        for (dynamic item in rtpDynamic) {
+          if (item is Map) {
+            String codec = item['codec']?.toString().toLowerCase() ?? '';
+            if (codec == 'h264') {
+              h264PayloadTypes.add(item['payload']);
+            } else if (codec == 'vp8' || codec == 'vp9') {
+              vpPayloadTypes.add(item['payload']);
+            }
+          }
+        }
+
+        if (isAvaDevice) {
+          // APPROACH 1: For AVA devices - Try to modify H.264 profiles for better compatibility
+          for (dynamic item in fmtpDynamic) {
+            if (item is Map && h264PayloadTypes.contains(item['payload'])) {
+              String config = item['config']?.toString() ?? '';
+              if (config.contains('profile-level-id')) {
+                // Try a more basic/compatible H.264 profile
+                // 42001f = Baseline Profile, Level 3.1 with constraint set
+                config = config.replaceAll(RegExp(r'profile-level-id=[^;]+'),
+                    'profile-level-id=42001f');
+                item['config'] = config;
+              }
+            }
+          }
+
+          // APPROACH 2: Prioritize VP8/VP9 over H.264
+          if (vpPayloadTypes.isNotEmpty) {
+            List<String> payloads = media['payloads'].toString().split(' ');
+            List<String> reorderedPayloads = <String>[];
+
+            // Add VP codecs first
+            for (int payload in vpPayloadTypes) {
+              reorderedPayloads.add(payload.toString());
+            }
+
+            // Add H.264 last
+            for (String payload in payloads) {
+              int? payloadInt = int.tryParse(payload);
+              if (payloadInt != null &&
+                  !vpPayloadTypes.contains(payloadInt) &&
+                  !h264PayloadTypes.contains(payloadInt)) {
+                reorderedPayloads.add(payload);
+              }
+            }
+
+            // Add H.264 at the end (lowest priority)
+            for (int payload in h264PayloadTypes) {
+              reorderedPayloads.add(payload.toString());
+            }
+
+            media['payloads'] = reorderedPayloads.join(' ');
+          }
+
+          // APPROACH 3 (uncomment if needed): Complete removal of H.264
+          /*
+        if (h264PayloadTypes.isNotEmpty) {
+          // Remove H.264 from RTP entries
+          media['rtp'] = rtpDynamic.where((dynamic item) {
+            return item is! Map || !h264PayloadTypes.contains(item['payload']);
+          }).toList();
+          
+          // Remove H.264 from FMTP entries
+          media['fmtp'] = fmtpDynamic.where((dynamic item) {
+            return item is! Map || !h264PayloadTypes.contains(item['payload']);
+          }).toList();
+          
+          // Update payload types, removing H.264
+          if (media['payloads'] != null) {
+            List<String> payloads = media['payloads'].toString().split(' ');
+            payloads.removeWhere((String payload) {
+              int? payloadInt = int.tryParse(payload);
+              return payloadInt != null && h264PayloadTypes.contains(payloadInt);
+            });
+            media['payloads'] = payloads.join(' ');
+          }
+        }
+        */
+        }
+      }
+    }
+  }
+
+  void _filterH264Codec(Map<String, dynamic> sdp) {
+    print("\n\n\n\n\n\n FILTERING h264 \n\n\n\n\n");
+    // Go through each media section
+    for (Map<String, dynamic> m in sdp['media']) {
+      if (m['type'] == 'video') {
+        // Get all rtp entries
+        List<dynamic> rtp = m['rtp'] ?? <dynamic>[];
+        List<dynamic> fmtp = m['fmtp'] ?? <dynamic>[];
+
+        // Find H264 payload types
+        List<int> h264PayloadTypes = <int>[];
+        for (dynamic rtpItem in rtp) {
+          if (rtpItem['codec']?.toString().toLowerCase() == 'h264') {
+            h264PayloadTypes.add(rtpItem['payload']);
+          }
+        }
+
+        // If H264 is found, remove it
+        if (h264PayloadTypes.isNotEmpty) {
+          // Remove from rtp
+          m['rtp'] = rtp
+              .where(
+                  (dynamic item) => !h264PayloadTypes.contains(item['payload']))
+              .toList();
+
+          // Remove from fmtp
+          m['fmtp'] = fmtp
+              .where(
+                  (dynamic item) => !h264PayloadTypes.contains(item['payload']))
+              .toList();
+
+          // Update payload types in the media section
+          if (m['payloads'] != null) {
+            List<String> payloads = m['payloads'].toString().split(' ');
+            payloads.removeWhere((String payload) =>
+                h264PayloadTypes.contains(int.tryParse(payload)));
+            m['payloads'] = payloads.join(' ');
+          }
+        }
+      }
+    }
   }
 
   void _setLocalMediaStatus() {
