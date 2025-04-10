@@ -182,6 +182,7 @@ class SIPUAHelper extends EventManager {
     _settings.register_extra_contact_uri_params =
         uaSettings.registerParams.extraContactUriParams;
     _settings.dtmf_mode = uaSettings.dtmfMode;
+    _settings.use_preloaded_route=uaSettings.use_preloaded_route;
     _settings.session_timers = uaSettings.sessionTimers;
     _settings.ice_gathering_timeout = uaSettings.iceGatheringTimeout;
     _settings.extra_Headers = uaSettings.extra_Headers;
@@ -891,6 +892,9 @@ class UaSettings {
 
   /// DTMF mode, in band (rfc2833) or out of band (sip info)
   DtmfMode dtmfMode = DtmfMode.INFO;
+
+  /// Use preloaded route
+  bool use_preloaded_route = false;
 
   /// Session Timers
   bool sessionTimers = true;

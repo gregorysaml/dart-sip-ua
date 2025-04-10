@@ -127,7 +127,7 @@ class _MyRegisterWidget extends State<RegisterWidget>
 
     _saveSettings();
 
-    currentUser.register(SipUser(
+       currentUser.register(SipUser(
         selectedTransport: _selectedTransport,
         wsExtraHeaders: _wsExtraHeaders,
         sipUri: _sipUriController.text,
@@ -142,7 +142,6 @@ class _MyRegisterWidget extends State<RegisterWidget>
     Color? textColor = Theme.of(context).textTheme.bodyMedium?.color;
     Color? textFieldFill =
         Theme.of(context).buttonTheme.colorScheme?.surfaceContainerLowest;
-    currentUser = context.watch<SipUserCubit>();
 
     OutlineInputBorder border = OutlineInputBorder(
       borderSide: BorderSide.none,
